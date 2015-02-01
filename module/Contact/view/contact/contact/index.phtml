@@ -1,0 +1,81 @@
+<?php
+$title = 'Contacts';
+$this->headTitle($title);
+$urlOrder = 'ASC';
+if ($order_by == 'first_name')
+    $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
+elseif ($order_by == 'last_name')
+    $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
+elseif ($order_by == 'email')
+    $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
+elseif ($order_by == 'phone_number')
+    $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
+elseif ($order_by == 'alternate_number')
+    $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
+?>
+<br/>
+<ol class="breadcrumb">
+    <li><a href="<?php
+        echo $this->url('home');
+        ?>">Home</a></li>
+    <li class="active"><?php echo $this->escapeHtml($title); ?></li>
+
+    <span class="pull-right"><a href="<?php
+        echo $this->url('contact', array(
+            'action' => 'add'));
+        ?>"><span class="glyphicon glyphicon-plus small"></span> Add new contact</a></span>
+</ol>
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>
+                <a href="<?php echo $this->url('contact', array('order_by' => 'first_name', 'order' => $urlOrder)); ?>">
+                    First Name <?php if ($order_by == 'first_name'): ?><i
+                        class="glyphicon glyphicon-chevron-<?php echo $urlOrder == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?>
+                </a>
+            </th>
+            <th>
+                <a href="<?php echo $this->url('contact', array('order_by' => 'last_name', 'order' => $urlOrder)); ?>">
+                    Last Name <?php if ($order_by == 'last_name'): ?><i
+                        class="glyphicon glyphicon-chevron-<?php echo $urlOrder == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?>
+                </a></th>
+            <th>
+                <a href="<?php echo $this->url('contact', array('order_by' => 'email', 'order' => $urlOrder)); ?>">
+                    Email <?php if ($order_by == 'email'): ?><i
+                        class="glyphicon glyphicon-chevron-<?php echo $urlOrder == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?>
+                </a></th>
+            <th>
+                <a href="<?php echo $this->url('contact', array('order_by' => 'phone_number', 'order' => $urlOrder)); ?>">
+                    Phone Number <?php if ($order_by == 'phone_number'): ?><i
+                        class="glyphicon glyphicon-chevron-<?php echo $urlOrder == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?>
+                </a></th>
+            <th>
+                <a href="<?php echo $this->url('contact', array('order_by' => 'alternate_number', 'order' => $urlOrder)); ?>">
+                    Alternate Number <?php if ($order_by == 'alternate_number'): ?><i
+                        class="glyphicon glyphicon-chevron-<?php echo $urlOrder == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?>
+                </a></th>
+            <th>&nbsp;</th>
+        </tr>
+        <?php foreach ($paginator as $contact) : ?>
+            <tr>
+                <td><?php echo $this->escapeHtml($contact->first_name); ?></td>
+                <td><?php echo $this->escapeHtml($contact->last_name); ?></td>
+                <td><?php echo $this->escapeHtml($contact->email); ?></td>
+                <td><?php echo $this->escapeHtml($contact->phone_number); ?></td>
+                <td><?php echo $this->escapeHtml($contact->alternate_number); ?></td>
+                <td>
+                    <a href="<?php echo $this->url('contact', array('action' => 'edit', 'id' => $contact->id));
+                    ?>">Edit</a>
+                    <a href="<?php echo $this->url('contact', array('action' => 'delete', 'id' => $contact->id));
+                    ?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
+<?php
+echo $this->paginationControl(
+    $paginator, 'Sliding', 'paginator-slide', array('order_by' => $order_by, 'order' => $order)
+);
+?>
+

@@ -1,0 +1,33 @@
+<?php
+$title = 'Delete Contact';
+$this->headTitle($title);
+?>
+<br/>
+<ol class="breadcrumb">
+    <li><a href="<?php
+        echo $this->url('home');
+        ?>">Home</a></li>
+    <li><a href="<?php
+        echo $this->url('contact');
+        ?>">Contacts</a></li>
+    <li class="active"><?php echo $this->escapeHtml($title); ?></li>
+</ol>
+
+<div class="text-center">
+    <div style="display: inline-block;">
+        <p>Are you sure that you want to delete
+            '<?php echo $this->escapeHtml($contact->first_name); ?>'
+        </p>
+        <?php
+        $url = $this->url('contact', array('action' => 'delete', 'id' => $this->id)); ?>
+        <form action="<?php echo $url; ?>" method="post">
+            <div>
+                <input type="hidden" name="id" value="<?php echo (int)$contact->id; ?>"/>
+                <input type="submit" class="btn btn-primary" name="del" value="Yes"/>
+                <input type="submit" class="btn btn-default" name="del" value="No"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+

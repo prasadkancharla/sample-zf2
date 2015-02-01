@@ -1,0 +1,2 @@
+2015-02-01T17:23:38+01:00 ERR (3): Statement could not be executed (42S02 - 1146 - Table 'contacts_manager.contacts' doesn't exist)
+2015-02-01T17:23:59+01:00 ERR (3): Statement could not be executed (42S02 - 1146 - Table 'contacts_manager.contacts' doesn't exist)
