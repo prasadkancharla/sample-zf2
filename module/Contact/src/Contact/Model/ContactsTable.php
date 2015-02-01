@@ -11,16 +11,6 @@ class ContactsTable extends BaseTable
 {
     protected $table = 'contacts';
 
-    public function __construct(TableGateway $tableGateway, Logger $logger)
-    {
-        parent::__construct($tableGateway, $logger);
-
-
-        $resultSet = new ResultSet(); // Zend\Db\ResultSet\ResultSet
-        $resultSet->setArrayObjectPrototype(new Contact());
-        //$resultSet->initialize($result);
-    }
-
     public function fetchUserContacts($userId, Select $select = null)
     {
         try {
