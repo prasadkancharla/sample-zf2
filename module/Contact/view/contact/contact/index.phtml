@@ -56,6 +56,15 @@ elseif ($order_by == 'alternate_number')
                 </a></th>
             <th>&nbsp;</th>
         </tr>
+        <?php if (count($paginator) == 0) {
+            ?>
+            <tr><td colspan="6" style="padding: 20px" class="text-center"><span class="text-muted">You don't have any contacts. <a href="<?php
+                        echo $this->url('contact', array(
+                            'action' => 'add'));
+                        ?>">Click</a> to add a new contact</span> </td></tr>
+        <?
+        }
+        ?>
         <?php foreach ($paginator as $contact) : ?>
             <tr>
                 <td><?php echo $this->escapeHtml($contact->first_name); ?></td>

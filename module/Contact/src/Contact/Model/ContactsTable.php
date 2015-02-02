@@ -54,8 +54,6 @@ class ContactsTable extends BaseTable
             $this->insert($data);
         } else {
             if ($this->getContact($id)) {
-                //TODO: check for permissions
-
                 $this->update($data, array('id' => $id));
             } else {
                 throw new \Exception('Contact id does not exist');
@@ -65,7 +63,12 @@ class ContactsTable extends BaseTable
 
     public function deleteContact($userId, $id)
     {
-        //TODO: check for permissions
+        $contact = $this->getContact($id);
+
+        if ($contact->user_id != $userId) {
+            throw new \Exception('You can not delete this contact');
+        }
+
         $this->tableGateway->delete(array('id' => $id));
     }
 }

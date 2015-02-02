@@ -69,7 +69,6 @@ class ContactController extends BaseController
                 $contact->exchangeArray($form->getData());
                 $this->getContactTable()->saveContact($this->getLoggedinUserId(), $contact);
 
-                // Redirect to list of contacts
                 return $this->redirect()->toRoute('contact');
             }
         }
@@ -79,55 +78,67 @@ class ContactController extends BaseController
 
     public function editAction()
     {
-        $contactId = (int)$this->params('id');
-        if (!$contactId) {
-            return $this->redirect()->toRoute('contact', array('action' => 'add'));
-        }
-        $contact = $this->getContactTable()->getContact($contactId);
-
-        $form = new ContactForm();
-        $form->bind($contact);
-        $form->get('submit')->setAttribute('value', 'Edit');
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                $this->getContactTable()->saveContact($this->getLoggedInUserId(), $contact);
-
-                return $this->redirect()->toRoute('contact');
+        try {
+            $contactId = (int)$this->params('id');
+            if (!$contactId) {
+                return $this->redirect()->toRoute('contact', array('action' => 'add'));
             }
-        }
+            $contact = $this->getContactTable()->getContact($contactId);
 
-        return array(
-            'id' => $contactId,
-            'form' => $form,
-        );
+            if ($contact->user_id != $this->getLoggedInUserId()) {
+                return $this->redirect()->toRoute('contact', array('action' => 'add'));
+            }
+
+            $form = new ContactForm();
+            $form->bind($contact);
+            $form->get('submit')->setAttribute('value', 'Edit');
+
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $form->setData($request->getPost());
+
+                if ($form->isValid()) {
+                    $this->getContactTable()->saveContact($this->getLoggedInUserId(), $contact);
+
+                    return $this->redirect()->toRoute('contact');
+                }
+            }
+
+            return array(
+                'id' => $contactId,
+                'form' => $form,
+            );
+        } catch (\Exception $e) {
+            return $this->redirect()->toRoute('contact');
+        }
     }
 
     public function deleteAction()
     {
-        $contactId = (int)$this->params('id');
-        if (!$contactId) {
-            return $this->redirect()->toRoute('contact');
-        }
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $del = $request->getPost()->get('del', 'No');
-            if ($del == 'Yes') {
-                $contactId = (int)$request->getPost()->get('id');
-                $this->getContactTable()->deleteContact($this->getLoggedInUserId(), $contactId);
+        try {
+            $contactId = (int)$this->params('id');
+            if (!$contactId) {
+                return $this->redirect()->toRoute('contact');
             }
 
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $del = $request->getPost()->get('del', 'No');
+                if ($del == 'Yes') {
+                    $contactId = (int)$request->getPost()->get('id');
+                    $this->getContactTable()->deleteContact($this->getLoggedInUserId(), $contactId);
+                }
+
+                return $this->redirect()->toRoute('contact');
+            }
+
+            return array(
+                'id' => $contactId,
+                'contact' => $this->getContactTable()->getContact($contactId)
+            );
+        } catch (\Exception $e) {
             return $this->redirect()->toRoute('contact');
         }
-
-        return array(
-            'id' => $contactId,
-            'contact' => $this->getContactTable()->getContact($contactId)
-        );
     }
 
     /**

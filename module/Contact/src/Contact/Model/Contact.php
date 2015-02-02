@@ -15,6 +15,7 @@ class Contact implements InputFilterAwareInterface
     public $email;
     public $phone_number;
     public $alternate_number;
+    public $user_id;
 
     protected $inputFilter;
 
@@ -29,6 +30,7 @@ class Contact implements InputFilterAwareInterface
         $this->email = (isset($data['email'])) ? $data['email'] : null;
         $this->phone_number = (isset($data['phone_number'])) ? $data['phone_number'] : null;
         $this->alternate_number = (isset($data['alternate_number'])) ? $data['alternate_number'] : null;
+        $this->user_id = (isset($data['user_id'])) ? $data['user_id'] : null;
     }
 
     public function getArrayCopy()
@@ -138,6 +140,14 @@ class Contact implements InputFilterAwareInterface
                             'allow_possible' => true
                         ),
                     ),
+                ),
+            )));
+
+            $inputFilter->add($factory->createInput(array(
+                'name' => 'user_id',
+                'required' => false,
+                'filters' => array(
+                    array('name' => 'Int'),
                 ),
             )));
 
