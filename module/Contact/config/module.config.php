@@ -13,11 +13,12 @@ return array(
             'contact' => array(
                 'type'    => 'segment',
                 'options' => array(
-                    'route'    => '/contact[/:action][/:id][/page/:page][/order_by/:order_by][/:order]',
+                    'route'    => '/contact[/:action][/:id][/page/:page][/letter/:letter][/order_by/:order_by][/:order]',
                     'constraints' => array(
                         'action' => '(?!\bpage\b)(?!\border_by\b)[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'     => '[0-9]+',
                         'page' => '[0-9]+',
+                        'letter' => '[a-zA-Z0-9_-]*',
                         'order_by' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'order' => 'ASC|DESC',
                     ),

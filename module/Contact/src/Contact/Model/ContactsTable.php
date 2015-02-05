@@ -8,14 +8,20 @@ class ContactsTable extends BaseTable
 {
     protected $table = 'contacts';
 
-    public function fetchUserContacts($userId, Select $select = null)
+    public function fetchUserContacts($userId, Select $select = null, $filters = array())
     {
         try {
             if (null === $select)
                 $select = new Select();
 
             $select->from($this->table)
-                ->where(array("user_id", $userId));
+                ->where(array("user_id" => $userId));
+
+            if (isset($filters["letter"]) && $filters["letter"] != "" && $filters["letter"] != "all") {
+                $select->where->like(
+                    'first_name', $filters["letter"] . '%');
+            }
+
             $resultSet = $this->tableGateway->selectWith($select);
             $resultSet->buffer();
 

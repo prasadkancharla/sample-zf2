@@ -35,10 +35,11 @@ class ContactController extends BaseController
         $orderBy = $this->params()->fromRoute('order_by', 'first_name');
         $order = $this->params()->fromRoute('order', Select::ORDER_ASCENDING);
         $page = $this->params()->fromRoute('page', 1);
+        $letter = $this->params()->fromRoute('letter', "all");
         $itemsPerPage = 10;
 
         $select = new Select();
-        $contacts = $this->getContactTable()->fetchUserContacts($this->getLoggedinUserId(), $select->order($orderBy . ' ' . $order));
+        $contacts = $this->getContactTable()->fetchUserContacts($this->getLoggedinUserId(), $select->order($orderBy . ' ' . $order), array("letter" => $letter));
 
         $contacts->current();
         $paginator = new Paginator(new paginatorIterator($contacts));
@@ -52,6 +53,9 @@ class ContactController extends BaseController
             'order' => $order,
             'page' => $page,
             'paginator' => $paginator,
+            'letter' => $letter,
+            'successMessages' => $this->flashMessenger()->getSuccessMessages(),
+            'errorMessages' => $this->flashMessenger()->getErrorMessages()
         ));
     }
 
@@ -60,20 +64,25 @@ class ContactController extends BaseController
         $form = new ContactForm();
         $form->get('submit')->setAttribute('value', 'Add');
 
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $contact = new Contact();
-            $form->setInputFilter($contact->getInputFilter());
-            $form->setData($request->getPost());
-            if ($form->isValid()) {
-                $contact->exchangeArray($form->getData());
-                $this->getContactTable()->saveContact($this->getLoggedinUserId(), $contact);
-
-                return $this->redirect()->toRoute('contact');
+        try {
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $contact = new Contact();
+                $form->setInputFilter($contact->getInputFilter());
+                $form->setData($request->getPost());
+                if ($form->isValid()) {
+                    $contact->exchangeArray($form->getData());
+                    $this->getContactTable()->saveContact($this->getLoggedinUserId(), $contact);
+                    $this->flashMessenger()->addMessage('Contact has been added successfully');
+                    return $this->redirect()->toRoute('contact');
+                }
             }
-        }
 
-        return array('form' => $form);
+            return array('form' => $form);
+        } catch (\Exception $e) {
+            $this->flashMessenger()->addErrorMessage('There has been a problem. Please try again.');
+            return $this->redirect()->toRoute('contact');
+        }
     }
 
     public function editAction()
@@ -99,7 +108,7 @@ class ContactController extends BaseController
 
                 if ($form->isValid()) {
                     $this->getContactTable()->saveContact($this->getLoggedInUserId(), $contact);
-
+                    $this->flashMessenger()->addMessage('Contact has been edited successfully');
                     return $this->redirect()->toRoute('contact');
                 }
             }
@@ -109,6 +118,7 @@ class ContactController extends BaseController
                 'form' => $form,
             );
         } catch (\Exception $e) {
+            $this->flashMessenger()->addErrorMessage('There has been a problem. Please try again.');
             return $this->redirect()->toRoute('contact');
         }
     }
@@ -127,6 +137,7 @@ class ContactController extends BaseController
                 if ($del == 'Yes') {
                     $contactId = (int)$request->getPost()->get('id');
                     $this->getContactTable()->deleteContact($this->getLoggedInUserId(), $contactId);
+                    $this->flashMessenger()->addSuccessMessage('Contact has been deleted successfully');
                 }
 
                 return $this->redirect()->toRoute('contact');
@@ -137,6 +148,7 @@ class ContactController extends BaseController
                 'contact' => $this->getContactTable()->getContact($contactId)
             );
         } catch (\Exception $e) {
+            $this->flashMessenger()->addErrorMessage('There has been a problem. Please try again.');
             return $this->redirect()->toRoute('contact');
         }
     }

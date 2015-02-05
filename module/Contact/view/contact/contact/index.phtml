@@ -1,6 +1,7 @@
 <?php
 $title = 'Contacts';
-$this->headTitle($title);
+$this->headTitle($title . " :: ");
+
 $urlOrder = 'ASC';
 if ($order_by == 'first_name')
     $urlOrder = $order == 'ASC' ? 'DESC' : 'ASC';
@@ -23,8 +24,36 @@ elseif ($order_by == 'alternate_number')
     <span class="pull-right"><a href="<?php
         echo $this->url('contact', array(
             'action' => 'add'));
-        ?>"><span class="glyphicon glyphicon-plus small"></span> Add new contact</a></span>
+        ?>"><span class="glyphicon glyphicon-plus small"></span> Add New Contact</a></span>
 </ol>
+
+<?php if (count($successMessages)) : ?>
+    <?php foreach ($successMessages as $msg) : ?>
+        <p class="alert alert-success"><?php echo $msg; ?></p>
+    <?php endforeach; ?>
+<?php endif; ?>
+<?php if (count($errorMessages)) : ?>
+    <?php foreach ($errorMessages as $msg) : ?>
+        <p class="alert alert-danger"><?php echo $msg; ?></p>
+    <?php endforeach; ?>
+<?php endif; ?>
+<?php
+
+$alphabets = array("All" => "all", // todo: add support for special characters and disable letters which doesn't have names in db
+    "A" => "A", "B" => "B", "C" => "C", "D" => "D", "E" => "E", "F" => "F", "G" => "G",
+    "H" => "H", "I" => "I", "J" => "J", "K" => "K", "L" => "L", "M" => "M", "N" => "N",
+    "O" => "O", "P" => "P", "Q" => "Q", "R" => "R", "S" => "S", "T" => "T", "U" => "U",
+    "V" => "V", "W" => "W", "X" => "X", "Y" => "Y", "Z" => "Z"
+);
+?>
+<ul class="pagination">
+    <?php foreach ($alphabets as $text => $letter): ?>
+        <li <?php echo $letter == $this->letter ? 'class="active"' : ''; ?>><a
+                href="<?php echo $this->url('contact', array('page' => $page, 'order_by' => $order_by, 'order' => $order, 'letter' => $letter)); ?>">
+                <?php echo $text; ?>
+            </a></li>
+    <?php endforeach; ?>
+</ul>
 <div class="table-responsive">
     <table class="table table-hover table-bordered">
         <tr>
@@ -58,10 +87,13 @@ elseif ($order_by == 'alternate_number')
         </tr>
         <?php if (count($paginator) == 0) {
             ?>
-            <tr><td colspan="6" style="padding: 20px" class="text-center"><span class="text-muted">You don't have any contacts. <a href="<?php
-                        echo $this->url('contact', array(
-                            'action' => 'add'));
-                        ?>">Click</a> to add a new contact</span> </td></tr>
+            <tr>
+                <td colspan="6" style="padding: 20px" class="text-center"><span class="text-muted">You don't have any contacts. <a
+                            href="<?php
+                            echo $this->url('contact', array(
+                                'action' => 'add'));
+                            ?>">Click</a> to add a new contact</span></td>
+            </tr>
         <?
         }
         ?>
@@ -84,7 +116,7 @@ elseif ($order_by == 'alternate_number')
 </div>
 <?php
 echo $this->paginationControl(
-    $paginator, 'Sliding', 'paginator-slide', array('order_by' => $order_by, 'order' => $order)
+    $paginator, 'Sliding', 'paginator-slide', array('order_by' => $order_by, 'order' => $order, 'letter' => $letter)
 );
 ?>
 
